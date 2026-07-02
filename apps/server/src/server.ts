@@ -1,24 +1,51 @@
-import Fastify from "fastify";
-import cors from "@fastify/cors";
-import jwt from "@fastify/jwt";
-import { routes } from "./routes";
+// import {createServer} from 'node:http';
+// import {createApp} from './app';
 
-const app = Fastify({ logger: true });
+// async function bootstrap(){
+//   const app = await createApp();
+//   const httpServer = createServer(app.server);
+//   const PORT = Number(process.env.PORT) || 3000;
 
-await app.register(cors, {
-  origin: ["http://localhost:5173"],
-  credentials: true,
+//   httpServer.listen(PORT, () => {
+//     app.log.info(`Server is running on http://localhost:${PORT}`);
+//   });
+// }
+// bootstrap().catch((err) => {
+//   console.error(err);
+//   process.exit(1);
+// })
+
+// import {createApp} from './app';
+
+// async function bootstrap(){
+//   const app = await createApp();
+//   const PORT = Number(process.env.PORT) || 3000;
+//   await app.listen({
+//     port: PORT,
+//     host: "0.0.0.0",
+//   });
+//   app.log.info(`Server running on http://localhost:${PORT}`);
+// }
+
+// bootstrap().catch((error) => {
+//   console.error(error);
+//   process.exit(1);
+// });
+import { createApp } from "./app";
+import { createServer } from "node:http";
+import { bootstrap } from "./bootstrap";
+
+async function bootstrapServer() {
+  const app = await createApp();
+  const server = createServer(app.server);
+  const PORT = Number(process.env.PORT) || 3000;
+  bootstrap(server);
+  server.listen(PORT, () => {
+    app.log.info(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+bootstrapServer().catch((error) => {
+  console.error(error);
+  process.exit(1);
 });
-
-await app.register(jwt, {
-  secret: process.env.JWT_SECRET ?? "dev-secret",
-});
-
-app.get("/", async () => ({ status: "ok", service: "codesync-backend" }));
-
-await routes(app);
-
-const port = Number(process.env.PORT ?? 4000);
-await app.listen({ port, host: "0.0.0.0" });
-
-console.log(`Backend running on http://localhost:${port}`);

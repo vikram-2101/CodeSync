@@ -1,0 +1,24 @@
+:root {
+  /* Backgrounds */
+  --background: 255 255 255;
+  --foreground: 17 24 39;
+
+  /* Surface */
+  --surface: 249 250 251;
+  --surface-hover: 243 244 246;
+
+  /* Brand */
+  --primary: 37 99 235;
+  --primary-foreground: 255 255 255;
+
+  /* Borders */
+  --border: 229 231 235;
+
+  /* Feedback */
+  --success: 22 163 74;
+  --warning: 234 179 8;
+  --destructive: 220 38 38;
+
+  /* Radius */
+  --radius: 0.5rem;
+}
