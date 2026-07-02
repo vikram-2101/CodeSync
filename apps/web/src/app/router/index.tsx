@@ -1,9 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "@/pages/HomePage";
+import LandingPage from "@/app/(landing)/page";
+import RoomPage from "@/app/room/page";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <LandingPage />,
+  },
+  {
+    path: "/room/:roomId",
+    element: <RoomPage />,
   },
 ]);

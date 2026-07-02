@@ -1,0 +1,12 @@
+.dark {
+  --background: 17 24 39;
+  --foreground: 249 250 251;
+
+  --surface: 31 41 55;
+  --surface-hover: 55 65 81;
+
+  --primary: 96 165 250;
+  --primary-foreground: 17 24 39;
+
+  --border: 75 85 99;
+}

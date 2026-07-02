@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@import "./tokens.css";
+@import "./themes.css";
+@import "./typography.css";
+
+@theme {
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-surface: rgb(var(--surface));
+  --color-surface-hover: rgb(var(--surface-hover));
+  --color-primary: rgb(var(--primary));
+  --color-primary-foreground: rgb(var(--primary-foreground));
+  --color-border: rgb(var(--border));
+  --color-success: rgb(var(--success));
+  --color-warning: rgb(var(--warning));
+  --color-destructive: rgb(var(--destructive));
+  --radius-md: var(--radius);
+  --font-sans: var(--font-sans);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
