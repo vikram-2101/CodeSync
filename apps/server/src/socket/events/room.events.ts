@@ -13,9 +13,6 @@ export function registerRoomEvents(
 ) {
   const { roomService } = dependencies;
   socket.on(SocketEvents.CREATE_ROOM, (payload) => {
-    // console.log("Create Room event received with payload:", payload);
-    // // business logic to create a room using dependencies.roomService
-
     try {
       const result = createRoomSchema.safeParse(payload);
       if (!result.success) {
@@ -27,7 +24,15 @@ export function registerRoomEvents(
       const room = roomService.createRoom(socket.id, result.data.username);
 
       socket.join(room.roomId);
-      socket.emit(SocketEvents.ROOM_STATE, room);
+      socket.emit(SocketEvents.ROOM_CREATED, {
+        room,
+      });
+
+      console.log(`[RoomEvents] Room created successfully`, {
+        roomId: room.roomId,
+        socketId: socket.id,
+        username: result.data.username,
+      });
     } catch (error) {
       socket.emit("error", {
         message:
@@ -59,6 +64,12 @@ export function registerRoomEvents(
         room,
       });
       io.to(result.data.roomId).emit(SocketEvents.PARTICIPANT_JOINED, room);
+
+      console.log(`[RoomEvents] Room joined successfully`, {
+        roomId: result.data.roomId,
+        socketId: socket.id,
+        username: result.data.username,
+      });
     } catch (error) {
       socket.emit("error", {
         message:
@@ -75,6 +86,11 @@ export function registerRoomEvents(
         io.to(room.roomId).emit(SocketEvents.ROOM_STATE, {
           message: "A participant has left the room.",
           room,
+        });
+
+        console.log(`[RoomEvents] Disconnect cleanup completed`, {
+          roomId: room.roomId,
+          socketId: socket.id,
         });
       }
       // socket.emit("roomLeft", {message: "Successfully left the room."});

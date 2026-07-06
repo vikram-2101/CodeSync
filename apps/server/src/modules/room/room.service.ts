@@ -10,11 +10,13 @@ import {
 } from "./room.types";
 import { RoomRepository } from "./room.repository";
 import { SessionManager } from "../session/session.manager";
+import { DocumentManager } from "../document/document.manager";
 const MAX_PARTICIPANTS = 2;
 export class RoomService {
   constructor(
     private readonly roomRepository: RoomRepository,
     private readonly sessionManager: SessionManager,
+    private readonly documentManager: DocumentManager,
   ) {}
 
   private generateRoomId(): string {
@@ -37,11 +39,20 @@ export class RoomService {
     };
     this.roomRepository.create(room);
 
+    this.documentManager.create(roomId);
+
     const session: Session = {
       socketId,
       roomId,
     };
     this.sessionManager.create(session);
+
+    console.log(`[RoomService] Room created successfully`, {
+      roomId,
+      socketId,
+      username,
+      participantCount: room.participants.size,
+    });
 
     return room;
   }
@@ -64,6 +75,14 @@ export class RoomService {
     };
     room.participants.set(socketId, participant);
     this.sessionManager.create({ socketId, roomId });
+
+    console.log(`[RoomService] User joined room successfully`, {
+      roomId,
+      socketId,
+      username,
+      participantCount: room.participants.size,
+    });
+
     return room;
   }
 
@@ -77,10 +96,25 @@ export class RoomService {
       throw new Error(`Room not found with id ${session.roomId}`);
     }
     room.participants.delete(socketId);
+
     this.sessionManager.delete(socketId);
+
     if (room.participants.size === 0) {
       this.roomRepository.deleteRoom(room.roomId);
+      this.documentManager.destroy(room.roomId);
+
+      console.log(`[RoomService] Room cleaned up after last participant left`, {
+        roomId: room.roomId,
+        socketId,
+      });
+    } else {
+      console.log(`[RoomService] Participant left room successfully`, {
+        roomId: room.roomId,
+        socketId,
+        remainingParticipants: room.participants.size,
+      });
     }
+
     return room;
   }
 

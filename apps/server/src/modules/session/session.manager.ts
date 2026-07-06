@@ -10,6 +10,11 @@ export class SessionManager {
       );
     }
     this.sessions.set(session.socketId, session);
+
+    console.log(`[SessionManager] Session created`, {
+      socketId: session.socketId,
+      roomId: session.roomId,
+    });
   }
 
   findBySocketId(socketId: SocketId): Session | null {
@@ -19,6 +24,15 @@ export class SessionManager {
     return this.sessions.has(socketId);
   }
   delete(socketId: SocketId): boolean {
-    return this.sessions.delete(socketId);
+    const deleted = this.sessions.delete(socketId);
+
+    if (deleted) {
+      console.log(`[SessionManager] Session deleted`, { socketId });
+    }
+
+    return deleted;
+  }
+  getAll(): ReadonlyMap<SocketId, Session> {
+    return this.sessions;
   }
 }

@@ -17,3 +17,9 @@ export const SocketEvents = {
 
   ERROR: "error",
 } as const;
+
+export const EditorEvents = {
+  SYNC: "editor:sync",
+  AWARENESS: "editor:awareness",
+  UPDATE: "editor:update",
+};
