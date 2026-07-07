@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
 import { Button } from "@/components/ui/button";
+import { CollaborativeEditor } from "@/features/editor/components/CollaborativeEditor";
 
 export default function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -33,10 +34,7 @@ export default function RoomPage() {
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          This is a placeholder page for Phase 1.2 testing. The collaborative
-          editor will go here!
-        </p>
+        {roomId && <CollaborativeEditor roomId={roomId} />}
 
         <Button asChild className="w-full">
           <Link to="/">Leave Room & Go Back</Link>

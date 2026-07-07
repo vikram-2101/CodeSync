@@ -2,6 +2,17 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
+import { useEffect } from "react";
+
+import {
+  onRoomCreated,
+  onRoomJoined,
+  removeRoomListeners,
+} from "@/features/room/api/room.socket";
+
+import { useRoom } from "@/features/room/hooks/useRoom";
+
 import {
   Card,
   CardContent,
@@ -25,6 +36,23 @@ const joinSchema = z.object({
 
 export function RoomEntryCard() {
   const navigate = useNavigate();
+
+  const { createRoom, joinRoom } = useRoom();
+
+  useEffect(() => {
+    onRoomCreated((room) => {
+      navigate(`/room/${room.roomId}`);
+    });
+
+    onRoomJoined((room) => {
+      navigate(`/room/${room.roomId}`);
+    });
+
+    return () => {
+      removeRoomListeners();
+    };
+  }, [navigate]);
+
   const { username, setUsername } = useUserStore();
 
   const createForm = useForm<z.infer<typeof createSchema>>({
@@ -44,14 +72,15 @@ export function RoomEntryCard() {
 
   const onCreate = (data: z.infer<typeof createSchema>) => {
     setUsername(data.name);
-    // Generate a random 9-character room ID
-    const newRoomId = crypto.randomUUID().replace(/-/g, "").slice(0, 9);
-    navigate(`/room/${newRoomId}`);
+
+    createRoom(data.name);
   };
+  // Generate a random 9-character room ID
+  // const newRoomId = createRoom(data.name);
 
   const onJoin = (data: z.infer<typeof joinSchema>) => {
     setUsername(data.name);
-    navigate(`/room/${data.roomId}`);
+    joinRoom(data.roomId, data.name);
   };
 
   return (
