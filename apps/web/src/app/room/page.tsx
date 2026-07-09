@@ -1,11 +1,16 @@
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
 import { Button } from "@/components/ui/button";
 import { CollaborativeEditor } from "@/features/editor/components/CollaborativeEditor";
+import { useYjsSync } from "@/features/editor/hooks/useYjsSync";
+import { PresenceList } from "@/features/presence/components/PresenceList";
+import { leaveRoom } from "@/features/room/api/room.socket";
 
 export default function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
   const { username } = useUserStore();
+  const { doc, awareness } = useYjsSync(roomId || "", username || "");
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
@@ -30,11 +35,12 @@ export default function RoomPage() {
             <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               Your Name
             </span>
-            <span className="font-medium">{username || "Anonymous"}</span>
+            {/* <span className="font-medium">{username || "Anonymous"}</span> */}
+            <PresenceList awareness={awareness} />
           </div>
         </div>
 
-        {roomId && <CollaborativeEditor roomId={roomId} />}
+        {roomId && <CollaborativeEditor roomId={roomId} doc={doc} />}
 
         <Button asChild className="w-full">
           <Link to="/">Leave Room & Go Back</Link>

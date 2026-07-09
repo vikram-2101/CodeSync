@@ -95,6 +95,33 @@ export function registerEditorEvents(
 
   /**
    * -----------------------------------
+   * AWARENESS (NEW - PRESENCE / CURSOR / SELECTION)
+   * -----------------------------------
+   */
+
+  socket.on(EditorEvents.AWARENESS, (update: Uint8Array) => {
+    console.log("[Awareness] received", {
+      socketId: socket.id,
+      size: update.byteLength,
+    });
+    const session = dependencies.sessionManager.findBySocketId(socket.id);
+
+    if (!session) {
+      return;
+    }
+
+    /**
+     * Awareness is ephemeral.
+     *
+     * Server does not apply it.
+     * It simply forwards it
+     * to other users in the room.
+     */
+    socket.to(session.roomId).emit(EditorEvents.AWARENESS, update);
+  });
+
+  /**
+   * -----------------------------------
    * CLEANUP
    * -----------------------------------
    */
