@@ -77,6 +77,30 @@ export function registerRoomEvents(
       });
     }
   });
+
+  socket.on(SocketEvents.LEAVE_ROOM, () => {
+    try {
+      const session = dependencies.sessionManager.findBySocketId(socket.id);
+      if (!session) return;
+
+      const room = roomService.leaveRoom(socket.id);
+      if (room) {
+        socket.leave(room.roomId);
+        io.to(room.roomId).emit(SocketEvents.ROOM_STATE, {
+          message: "A participant has left the room.",
+          room,
+        });
+
+        console.log(`[RoomEvents] Room left successfully`, {
+          roomId: room.roomId,
+          socketId: socket.id,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to process leave room event:", error);
+    }
+  });
+
   socket.on("disconnect", () => {
     try {
       const session = dependencies.sessionManager.findBySocketId(socket.id);

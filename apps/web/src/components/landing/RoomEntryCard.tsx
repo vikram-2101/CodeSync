@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import {
   onRoomCreated,
   onRoomJoined,
+  onRoomError,
+  leaveRoom,
   removeRoomListeners,
 } from "@/features/room/api/room.socket";
 
@@ -39,20 +41,6 @@ export function RoomEntryCard() {
 
   const { createRoom, joinRoom } = useRoom();
 
-  useEffect(() => {
-    onRoomCreated((room) => {
-      navigate(`/room/${room.roomId}`);
-    });
-
-    onRoomJoined((room) => {
-      navigate(`/room/${room.roomId}`);
-    });
-
-    return () => {
-      removeRoomListeners();
-    };
-  }, [navigate]);
-
   const { username, setUsername } = useUserStore();
 
   const createForm = useForm<z.infer<typeof createSchema>>({
@@ -69,6 +57,31 @@ export function RoomEntryCard() {
       roomId: "",
     },
   });
+
+  useEffect(() => {
+    // If the user arrives at the landing page, make sure they are completely
+    // removed from any active rooms on the server. This safely handles both
+    // browser "Back" button navigation and the "Leave Room" button without
+    // being affected by React Strict Mode's unmount/remount of the RoomPage.
+    leaveRoom();
+
+    onRoomCreated((room) => {
+      navigate(`/room/${room.roomId}`);
+    });
+
+    onRoomJoined((room) => {
+      navigate(`/room/${room.roomId}`);
+    });
+
+    onRoomError((error) => {
+      joinForm.setError("roomId", { message: error.message });
+      createForm.setError("name", { message: error.message });
+    });
+
+    return () => {
+      removeRoomListeners();
+    };
+  }, [navigate, joinForm, createForm]);
 
   const onCreate = (data: z.infer<typeof createSchema>) => {
     setUsername(data.name);
