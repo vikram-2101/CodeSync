@@ -1,11 +1,9 @@
-import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
 import { Button } from "@/components/ui/button";
 import { CollaborativeEditor } from "@/features/editor/components/CollaborativeEditor";
 import { useYjsSync } from "@/features/editor/hooks/useYjsSync";
 import { PresenceList } from "@/features/presence/components/PresenceList";
-import { leaveRoom } from "@/features/room/api/room.socket";
 
 export default function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -40,7 +38,13 @@ export default function RoomPage() {
           </div>
         </div>
 
-        {roomId && <CollaborativeEditor roomId={roomId} doc={doc} />}
+        {roomId && (
+          <CollaborativeEditor
+            roomId={roomId}
+            doc={doc}
+            awareness={awareness}
+          />
+        )}
 
         <Button asChild className="w-full">
           <Link to="/">Leave Room & Go Back</Link>

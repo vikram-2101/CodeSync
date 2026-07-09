@@ -5,7 +5,7 @@ import * as syncProtocol from "y-protocols/sync";
 import * as encoding from "lib0/encoding";
 import * as decoding from "lib0/decoding";
 
-import { EditorEvents } from "@codesync/shared";
+import { EditorEvents, getUserColor } from "@codesync/shared";
 
 import { useSocket } from "@/app/providers/socket/useSocket";
 
@@ -14,6 +14,7 @@ import {
   Awareness,
   encodeAwarenessUpdate,
 } from "y-protocols/awareness";
+
 /**
  * Socket.IO delivers binary data as ArrayBuffer in browsers.
  * Yjs (via lib0) requires Uint8Array — ArrayBuffer has no numeric index
@@ -50,6 +51,7 @@ export function useYjsSync(roomId: string, username: string) {
       ...currentState,
       user: {
         name: username,
+        color: getUserColor(username),
       },
     });
 

@@ -3,13 +3,18 @@ import Editor from "@monaco-editor/react";
 import type * as monaco from "monaco-editor";
 import { MonacoBinding } from "y-monaco";
 import * as Y from "yjs";
+import type { Awareness } from "y-protocols/awareness.js";
+
+import { CursorThemeManager } from "../utils/CursorThemeManager";
 
 export function CollaborativeEditor({
   roomId,
   doc,
+  awareness,
 }: {
   roomId: string;
   doc: Y.Doc;
+  awareness: Awareness;
 }) {
   const [editor, setEditor] =
     useState<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -26,12 +31,24 @@ export function CollaborativeEditor({
 
     const yText = doc.getText("editor");
 
-    const binding = new MonacoBinding(yText, model, new Set([editor]), null);
+    const binding = new MonacoBinding(
+      yText,
+      model,
+      new Set([editor]),
+      awareness,
+    );
 
     return () => {
       binding.destroy();
     };
-  }, [doc, editor]);
+  }, [doc, editor, awareness]);
+
+  useEffect(() => {
+    const themeManager = new CursorThemeManager(awareness);
+    return () => {
+      themeManager.destroy();
+    };
+  }, [awareness]);
 
   return (
     <Editor

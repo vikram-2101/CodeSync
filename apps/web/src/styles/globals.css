@@ -23,3 +23,17 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
+
+/* y-monaco remote cursor styles */
+.yRemoteSelection {
+  background-color: rgba(250, 129, 0, 0.2);
+}
+
+.yRemoteSelectionHead {
+  position: absolute;
+  border-left: 2px solid orange;
+  border-top: 2px solid orange;
+  border-bottom: 2px solid orange;
+  height: 100%;
+  box-sizing: border-box;
+}
