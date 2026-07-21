@@ -65,8 +65,13 @@ export class RoomService {
     if (room.participants.size >= MAX_PARTICIPANTS) {
       throw new Error(`Room with id ${roomId} is full`);
     }
-    if (this.sessionManager.exists(socketId)) {
-      throw new Error(`Session already belongs to a room.`);
+    const session = this.sessionManager.findBySocketId(socketId);
+    if (session) {
+      if (session.roomId === roomId) {
+        // Idempotent success: the client is already in this room on this socket.
+        return room;
+      }
+      throw new Error(`Session already belongs to a different room.`);
     }
     const participant: Participant = {
       socketId,

@@ -1,27 +1,27 @@
 import { NodeId } from "./project.types";
 
-interface CreateFileOperation {
+export interface CreateFileOperation {
   type: "CREATE_FILE";
   id: NodeId;
   parentId: NodeId | null;
   name: string;
 }
 
-interface CreateFolderOperation {
+export interface CreateFolderOperation {
   type: "CREATE_FOLDER";
   id: NodeId;
   parentId: NodeId | null;
   name: string;
 }
 
-interface RenameNodeOperation {
+export interface RenameNodeOperation {
   id: NodeId;
   type: "RENAME_NODE";
   newName: string;
 }
 
-interface DeleteNodeOperation {
-  nodeId: NodeId;
+export interface DeleteNodeOperation {
+  id: NodeId;
   type: "DELETE_NODE";
 }
 
